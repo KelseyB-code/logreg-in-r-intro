@@ -45,3 +45,20 @@ x <- Smarket[,1:8]
 y <- Smarket[,9]
 scales <- list(x=list(relation="free"), y=list(relation="free"))
 featurePlot(x=x, y=y, plot="density", scales=scales)
+
+## BUILDING LOGISTIC REGRESSION MODEL
+
+glm.fit <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, 
+               data = Smarket, 
+               family = binomial)
+
+summary(glm.fit)
+
+glm.probs <- predict(glm.fit,type = "response")
+glm.probs[1:5]
+
+glm.pred <- ifelse(glm.probs > 0.5, "Up", "Down")
+
+attach(Smarket)
+table(glm.pred,Direction)
+mean(glm.pred == Direction)
