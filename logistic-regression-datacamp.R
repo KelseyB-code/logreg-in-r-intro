@@ -62,3 +62,35 @@ glm.pred <- ifelse(glm.probs > 0.5, "Up", "Down")
 attach(Smarket)
 table(glm.pred,Direction)
 mean(glm.pred == Direction)
+
+## CREATING TRAINING AND TEST SAMPLES
+
+train = Year<2005 #true for years less than 2005
+
+#refit model with glm.fit with subset=train
+glm.fit <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume,
+               data = Smarket, 
+               family = binomial,
+               subset = train)
+
+
+glm.probs <- predict(glm.fit, 
+                     newdata = Smarket[!train,],
+                     type = "response")
+
+glm.pred <- ifelse(glm.probs > 0.5, "Up", "Down")
+
+Direction.2005 = Smarket$Direction[!train]
+table(glm.pred, Direction.2005)
+mean(glm.pred == Direction.2005)
+
+## SOLVING OVERFITTING
+
+#fit a smaller model - use only Lag1, Lag2, Lag3 as predictors + leave out others
+glm.fit = glm(Direction ~ Lag1 + Lag2 + Lag3, data = Smarket, family = binomial, subset = train)
+glm.probs = predict(glm.fit, newdata = Smarket[!train,], type = "response")
+glm.pred = ifelse(glm.probs > 0.5, "Up", "Down")
+table(glm.pred, Direction.2005)
+mean(glm.pred == Direction.2005)
+
+summary(glm.fit)
