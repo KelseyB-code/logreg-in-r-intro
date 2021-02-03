@@ -1,2 +1,5 @@
 install.packages("ISLR")
 library(ISLR)
+names(Smarket)
+head(Smarket)
+summary(Smarket)
